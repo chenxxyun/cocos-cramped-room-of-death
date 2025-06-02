@@ -1,5 +1,8 @@
 import { _decorator } from 'cc';
 
+import { TILE_TYPE_ENUM } from '../Enums/index';
+import { ILevel } from './';
+
 const { ccclass, property } = _decorator;
 const mapInfo = [
     [
@@ -423,3 +426,10 @@ const mapInfo = [
       },
     ],
   ];
+
+
+  const level:ILevel = {
+    mapInfo
+  };
+
+  export default level;
