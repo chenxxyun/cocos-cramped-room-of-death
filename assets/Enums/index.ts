@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:11:05
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-02 16:45:57
+ * @LastEditTime: 2025-06-03 12:23:47
  * @FilePath: \cocos-cramped-room-of-death\assets\Enums\index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -50,4 +50,37 @@ export enum CONTROLLER_ENUM{
     TURNLEFT = 'TURNLEFT',
     TURNRIGHT = 'TURNRIGHT'
 
+}
+
+
+export enum FSM_PARAMS_TYPE_ENUM{
+    TRIGGER= 'TRIGGER',
+    NUMBER= 'NUMBER'
+}
+
+export enum PARAMS_NAME_ENUM{ 
+    IDLE='IDLE',
+    TURNLEFT='TURNLEFT',
+    TURNRIGHT='TURNRIGHT',
+    DIRECTION='DIRECTION'
+   
+}
+
+export enum DIRECTION_ENUM{
+    TOP = "TOP",
+    BOTTOM = 'BOTTOM',
+    LEFT = 'LEFT',
+    RIGHT = 'RIGHT'
+}
+
+export enum ENTIIY_STATE_ENUM{
+    IDLE = 'IDLE',
+    TURNLEFT='TURNLEFT',
+}
+
+export enum DIRECTIOMN_ORDER_ENUM{
+    TOP = 0,
+    BOTTOM = 1,
+    LEFT = 2,
+    RIGHT = 3
 }

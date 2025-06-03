@@ -2,33 +2,31 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-02 17:16:57
+ * @LastEditTime: 2025-06-03 14:20:04
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import {
   _decorator,
-  animation,
-  Animation,
-  AnimationClip,
   Component,
   Sprite,
-  SpriteFrame,
   UITransform,
 } from 'cc';
 
 import {
   CONTROLLER_ENUM,
+  DIRECTIOMN_ORDER_ENUM,
+  DIRECTION_ENUM,
+  ENTIIY_STATE_ENUM,
   EVENT_ENUM,
+  PARAMS_NAME_ENUM,
 } from '../../Enums';
 import EventManager from '../../Runtime/EventManager';
-import ResourceManager from '../../Runtime/ResourceManager';
 import {
   TILE_HEIGHT,
   TILE_WIDTH,
 } from '../Tile/TileManager';
-
-const ANIMATION_SPEED = 1/8 
+import { PlayerStateMachine } from './PlayerStateMachine';
 
 const { ccclass, property } = _decorator;
   
@@ -40,9 +38,50 @@ const { ccclass, property } = _decorator;
     targetX:number = 0
     targetY:number = 0
     private readonly speed  = 1/10
-    async init(){
-        await this.render()
 
+    fsm:PlayerStateMachine
+
+    private _direction:DIRECTION_ENUM
+
+    private _state:ENTIIY_STATE_ENUM
+
+    get direction(){
+        return this._direction
+    }
+    set direction(newDirection){
+        this._direction = newDirection
+        this.fsm.setParams(PARAMS_NAME_ENUM.DIRECTION,DIRECTIOMN_ORDER_ENUM[this._direction])
+       
+    }
+    get state(){
+        return this._state
+    }
+
+    set state(newState){
+        this._state = newState
+        this.fsm.setParams(newState,true)
+    }
+
+    async init(){
+
+        const sprite = this.addComponent(Sprite)
+        sprite.sizeMode = Sprite.SizeMode.CUSTOM
+        const transform = this.getComponent(UITransform)
+        transform.setContentSize(TILE_WIDTH*4,TILE_HEIGHT*4)
+
+        
+
+        // 添加设置状态机
+        this.fsm = this.addComponent(PlayerStateMachine)
+        await this.fsm.init()
+        this.fsm.setParams(PARAMS_NAME_ENUM.IDLE, true)
+
+        // 设置初始方向
+        this.direction = DIRECTION_ENUM.TOP
+        // 设置初始状态
+        this.state = ENTIIY_STATE_ENUM.IDLE
+
+        // 添加按钮控制事件
         EventManager.Instance.on(EVENT_ENUM.PLAYER_CTRL,this.move,this)
     }
 
@@ -84,36 +123,19 @@ const { ccclass, property } = _decorator;
             this.targetX-=1
         }else if (InputDeviceInfo === CONTROLLER_ENUM.RIGHT) {
             this.targetX+=1
+        }else if (InputDeviceInfo === CONTROLLER_ENUM.TURNLEFT) {
+            // this.fsm.setParams(PARAMS_NAME_ENUM.TURNLEFT,true)
+            if (this.direction === DIRECTION_ENUM.TOP) {
+                this.direction = DIRECTION_ENUM.LEFT
+            }else if (this.direction === DIRECTION_ENUM.LEFT) {
+                this.direction = DIRECTION_ENUM.BOTTOM
+            }else if (this.direction === DIRECTION_ENUM.BOTTOM) {
+                this.direction = DIRECTION_ENUM.RIGHT
+            }else if (this.direction === DIRECTION_ENUM.RIGHT) {
+                this.direction = DIRECTION_ENUM.TOP
+            }
+            this.state = ENTIIY_STATE_ENUM.TURNLEFT
         }
-
-    }
-
-    async render(){
-        const sprite = this.addComponent(Sprite)
-        sprite.sizeMode = Sprite.SizeMode.CUSTOM
-
-        const transform = this.getComponent(UITransform)
-        transform.setContentSize(TILE_WIDTH*4,TILE_HEIGHT*4)
-
-        const spriteFrames =await ResourceManager.Instance.loadDir('texture/player/idle/top')
-
-        const animationComponent =  this.addComponent(Animation)
-
-        const animationClip = new AnimationClip();
-
-        const track  = new animation.ObjectTrack(); // 创建一个对象轨道
-        track.path = new animation.TrackPath().toComponent(Sprite).toProperty('spriteFrame'); // 指定轨道路径，即指定目标对象为
-        const frames : Array<[number,SpriteFrame]>=spriteFrames.map((item,index)=>[ANIMATION_SPEED*index,item]);
-
-        
-        track.channel.curve.assignSorted(frames);
-
-        // 最后将轨道添加到动画剪辑以应用
-        animationClip.addTrack(track);
-        animationClip.duration = frames.length*ANIMATION_SPEED
-        animationClip.wrapMode = AnimationClip.WrapMode.Loop;
-        animationComponent.defaultClip = animationClip;
-        animationComponent.play()
 
     }
   }
