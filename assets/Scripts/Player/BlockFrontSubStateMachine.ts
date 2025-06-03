@@ -7,14 +7,14 @@ import { DIRECTION_ENUM } from '../../Enums';
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-03 13:45:20
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-03 14:36:24
+ * @LastEditTime: 2025-06-03 17:44:25
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Player\TurnLeftSubStateMachine.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * 
  */
 
-const BASE_URL = 'texture/player/turnleft'
-export default class TurnLeftSubStateMachine extends DirectionSubStateMachine {
+const BASE_URL = 'texture/player/blockfront'
+export default class BlockFrontSubStateMachine extends DirectionSubStateMachine {
     constructor(fsm:StateMachine) {
         super(fsm)
         this.stateMachine.set(
