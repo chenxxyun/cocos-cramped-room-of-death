@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-04 15:07:39
+ * @LastEditTime: 2025-06-04 19:10:50
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -17,6 +17,7 @@ import Levels, { ILevel } from '../../Levels';
 import DataManager from '../../Runtime/DataManager';
 import EventManager from '../../Runtime/EventManager';
 import { createUINode } from '../../Utils';
+import { DoorManager } from '../Door/DoorManager';
 import { PlayerManager } from '../Player/PlayerManager';
 import {
   TILE_HEIGHT,
@@ -56,6 +57,7 @@ export class BetaleManneger extends Component {
         
             this.generateTileMap()
             this.generatePlayer()
+            this.generateDoor()
             this.generateEnemies()
         }
     }
@@ -98,6 +100,13 @@ export class BetaleManneger extends Component {
         const enemiyManager = enemiy.addComponent(WoodenSkeletonManager)
         await enemiyManager.init()
         DataManager.Instance.enemies.push(enemiyManager)
+    }
+    async generateDoor(){
+        const door = createUINode()
+        door.setParent(this.stage)
+        const doorManager = door.addComponent(DoorManager)
+        await doorManager.init()
+        DataManager.Instance.door = doorManager
     }
 
     adaptPos(){
