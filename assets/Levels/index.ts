@@ -9,7 +9,7 @@
 
 import {
   DIRECTION_ENUM,
-  ENTIIY_STATE_ENUM,
+  ENTITY_STATE_ENUM,
   ENTITY_TYPE_ENUM,
   TILE_TYPE_ENUM,
 } from '../Enums';
@@ -21,7 +21,7 @@ export interface IEntity {
   y: number,
   type: ENTITY_TYPE_ENUM,
   direction: DIRECTION_ENUM,
-  state: ENTIIY_STATE_ENUM
+  state: ENTITY_STATE_ENUM
 
 }
 

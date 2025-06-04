@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-03 16:06:58
+ * @LastEditTime: 2025-06-04 16:38:49
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -14,18 +14,18 @@ import {
 } from 'cc';
 
 import {
-  DIRECTIOMN_ORDER_ENUM,
   DIRECTION_ENUM,
-  ENTIIY_STATE_ENUM,
+  DIRECTION_ORDER_ENUM,
+  ENTITY_STATE_ENUM,
   ENTITY_TYPE_ENUM,
   PARAMS_NAME_ENUM,
 } from '../Enums';
 import { IEntity } from '../Levels';
-import { PlayerStateMachine } from '../Scripts/Player/PlayerStateMachine';
 import {
   TILE_HEIGHT,
   TILE_WIDTH,
 } from '../Scripts/Tile/TileManager';
+import { StateMachine } from './StateMachine';
 
 const { ccclass, property } = _decorator;
     
@@ -35,20 +35,18 @@ export class EntityManager extends Component {
     x:number = 0
     y:number = 0
 
-    fsm:PlayerStateMachine
-
+    fsm:StateMachine
     private _direction:DIRECTION_ENUM
+    private _state:ENTITY_STATE_ENUM
 
-    private _state:ENTIIY_STATE_ENUM
-
-    private type:ENTITY_TYPE_ENUM
+    type:ENTITY_TYPE_ENUM
 
     get direction(){
         return this._direction
     }
     set direction(newDirection){
         this._direction = newDirection
-        this.fsm.setParams(PARAMS_NAME_ENUM.DIRECTION,DIRECTIOMN_ORDER_ENUM[this._direction])
+        this.fsm.setParams(PARAMS_NAME_ENUM.DIRECTION,DIRECTION_ORDER_ENUM[this._direction])
         
     }
     get state(){

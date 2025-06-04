@@ -1,3 +1,11 @@
+/*
+ * @Author: 尘韵 2443492647@qq.com
+ * @Date: 2025-06-03 10:28:48
+ * @LastEditors: 尘韵 2443492647@qq.com
+ * @LastEditTime: 2025-06-04 11:41:03
+ * @FilePath: \cocos-cramped-room-of-death\assets\Base\State.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 
 /* 
     1.需要知道animationClip
@@ -13,6 +21,7 @@ import {
 } from 'cc';
 
 import ResourceManager from '../Runtime/ResourceManager';
+import { sortSpriteFrame } from '../Utils';
 import { StateMachine } from './StateMachine';
 
 const ANIMATION_SPEED = 1/8 
@@ -42,7 +51,7 @@ export default class State {
 
         const track  = new animation.ObjectTrack(); // 创建一个对象轨道
         track.path = new animation.TrackPath().toComponent(Sprite).toProperty('spriteFrame'); // 指定轨道路径，即指定目标对象为
-        const frames : Array<[number,SpriteFrame]>=spriteFrames.map((item,index)=>[ANIMATION_SPEED*index,item]);
+        const frames : Array<[number,SpriteFrame]>=sortSpriteFrame(spriteFrames).map((item,index)=>[ANIMATION_SPEED*index,item]);
 
         
         track.channel.curve.assignSorted(frames);
