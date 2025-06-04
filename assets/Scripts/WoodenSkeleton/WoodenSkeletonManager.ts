@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-04 17:27:09
+ * @LastEditTime: 2025-06-04 18:50:42
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -47,16 +47,24 @@ const { ccclass, property } = _decorator;
         EventManager.Instance.on(EVENT_ENUM.PLAYER_BORN,this.onChangeDirection,this)
         EventManager.Instance.on(EVENT_ENUM.PLAYER_MOVE_END,this.onChangeDirection,this)
         EventManager.Instance.on(EVENT_ENUM.PLAYER_MOVE_END,this.onAttack,this)
+        EventManager.Instance.on(EVENT_ENUM.ATTACK_ENEMY,this.onDead,this)
 
         
         this.onChangeDirection(true)
     }
+    onDestroy() {
+      super.onDestroy()
+      EventManager.Instance.off(EVENT_ENUM.PLAYER_BORN,this.onChangeDirection)
+      EventManager.Instance.off(EVENT_ENUM.PLAYER_MOVE_END,this.onChangeDirection)
+      EventManager.Instance.off(EVENT_ENUM.PLAYER_MOVE_END,this.onAttack)
+      EventManager.Instance.off(EVENT_ENUM.ATTACK_ENEMY,this.onDead)
+    }
 
     onChangeDirection(isInit=false){
-      
-      if (!DataManager.Instance.player) {
+      if (this.state === ENTITY_STATE_ENUM.DEATH || !DataManager.Instance.player){
         return
-      }
+      } 
+
       const {x:playerX,y:playerY} = DataManager.Instance.player
 
       const disX = Math.abs(this.x - playerX)
@@ -85,6 +93,10 @@ const { ccclass, property } = _decorator;
       
     }
     onAttack(){
+      if (this.state === ENTITY_STATE_ENUM.DEATH || !DataManager.Instance.player){
+        return
+      } 
+
       const {x:playerX,y:playerY ,state:playerState} = DataManager.Instance.player
 
       if (((this.x === playerX && Math.abs(this.y - playerY) <= 1) || 
@@ -102,8 +114,17 @@ const { ccclass, property } = _decorator;
       
     }
 
-    
+    onDead(id:string){
+      console.log(id,this.id);
+      
+      if (this.state === ENTITY_STATE_ENUM.DEATH) {
+        return
+      }
+      if (this.id === id) {
+        this.state = ENTITY_STATE_ENUM.DEATH
+      }
 
+    }
   }
   
   

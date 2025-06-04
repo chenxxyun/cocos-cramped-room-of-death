@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-04 17:00:12
+ * @LastEditTime: 2025-06-04 18:51:31
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -22,6 +22,7 @@ import {
   PARAMS_NAME_ENUM,
 } from '../../Enums';
 import AttackSubStateMachine from './AttackSubStateMachine';
+import DeathSubStateMachine from './DeathSubStateMachine';
 import IdleSubStateMachine from './IdleSubStateMachine';
 
 const { ccclass, property } = _decorator;
@@ -45,11 +46,13 @@ export class WoodenSkeletonMachine extends StateMachine {
     initParams() {
         this.params.set(PARAMS_NAME_ENUM.IDLE, getInitParamsTrigger())
         this.params.set(PARAMS_NAME_ENUM.ATTACK, getInitParamsTrigger())
+        this.params.set(PARAMS_NAME_ENUM.DEATH, getInitParamsTrigger())
         this.params.set(PARAMS_NAME_ENUM.DIRECTION, getInitParamsNumber())
     }
     initStateMachine() {
         this.stateMachine.set(PARAMS_NAME_ENUM.IDLE, new IdleSubStateMachine(this))
         this.stateMachine.set(PARAMS_NAME_ENUM.ATTACK, new AttackSubStateMachine(this))
+        this.stateMachine.set(PARAMS_NAME_ENUM.DEATH, new DeathSubStateMachine(this))
 
     }
     // 初始化动画事件
@@ -72,8 +75,10 @@ export class WoodenSkeletonMachine extends StateMachine {
             
             case this.stateMachine.get(PARAMS_NAME_ENUM.IDLE):
             case this.stateMachine.get(PARAMS_NAME_ENUM.ATTACK):
-                if (this.params.get(PARAMS_NAME_ENUM.ATTACK).value) {
-
+            case this.stateMachine.get(PARAMS_NAME_ENUM.DEATH):
+                if (this.params.get(PARAMS_NAME_ENUM.DEATH).value) {
+                    this.currentState = this.stateMachine.get(PARAMS_NAME_ENUM.DEATH)
+                } else if (this.params.get(PARAMS_NAME_ENUM.ATTACK).value) {
                     this.currentState = this.stateMachine.get(PARAMS_NAME_ENUM.ATTACK)
                 } else if (this.params.get(PARAMS_NAME_ENUM.IDLE).value) {
                     this.currentState = this.stateMachine.get(PARAMS_NAME_ENUM.IDLE)

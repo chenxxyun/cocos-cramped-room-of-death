@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 13:58:04
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-04 11:41:49
+ * @LastEditTime: 2025-06-04 18:43:24
  * @FilePath: \cocos-cramped-room-of-death\assets\Utils\index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -23,6 +23,10 @@ export const createUINode = (name:string='')=>{
     node.layer = Layers.Enum.UI_2D
 
     return node
+}
+
+export const randomByLen = (len:number)=>{
+  return Array.from({length:len}).reduce<string>((total,item)=>total + Math.floor(Math.random()*10),'')
 }
 
 export const randomByRange = (start:number,end:number)=>{

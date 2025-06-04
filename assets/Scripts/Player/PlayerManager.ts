@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-04 18:27:10
+ * @LastEditTime: 2025-06-04 18:54:00
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -105,9 +105,11 @@ export class PlayerManager extends EntityManager {
 
   inputHandle(InputDeviceInfo: CONTROLLER_ENUM) {
     if (this.isMoving) return
-    if (this.state === ENTITY_STATE_ENUM.DEATH || this.state === ENTITY_STATE_ENUM.AIRDEATH) return
+    if (this.state === ENTITY_STATE_ENUM.DEATH || this.state === ENTITY_STATE_ENUM.AIRDEATH || this.state === ENTITY_STATE_ENUM.ATTACK) return
 
-    if ( this.willAttack(InputDeviceInfo) ) {
+    const id =this.willAttack(InputDeviceInfo)
+    if ( id)  {
+      EventManager.Instance.emit(EVENT_ENUM.ATTACK_ENEMY,id)
       return
     }
 
@@ -168,9 +170,9 @@ export class PlayerManager extends EntityManager {
   }
 
   willAttack(type: CONTROLLER_ENUM) {
-    const enemise = DataManager.Instance.enemies
+    const enemise = DataManager.Instance.enemies.filter((enemy) => enemy.state !== ENTITY_STATE_ENUM.DEATH)
     for (let i = 0; i < enemise.length; i++) {
-      const { x: enemyX, y: enemyY } = enemise[i]
+      const { x: enemyX, y: enemyY,id: enemiyId } = enemise[i]
       if (
         type === CONTROLLER_ENUM.TOP && 
         this.direction === DIRECTION_ENUM.TOP && 
@@ -178,7 +180,7 @@ export class PlayerManager extends EntityManager {
         enemyY === this.targetY - 2
       ) {
         this.state = ENTITY_STATE_ENUM.ATTACK
-        return true
+        return enemiyId
       }else  if (
         type === CONTROLLER_ENUM.LEFT && 
         this.direction === DIRECTION_ENUM.LEFT && 
@@ -186,7 +188,7 @@ export class PlayerManager extends EntityManager {
         enemyY === this.targetY
       ) {
         this.state = ENTITY_STATE_ENUM.ATTACK
-        return true
+        return enemiyId
       }else  if (
         type === CONTROLLER_ENUM.BOTTOM && 
         this.direction === DIRECTION_ENUM.BOTTOM && 
@@ -194,7 +196,7 @@ export class PlayerManager extends EntityManager {
         enemyY === this.targetY + 2
       ) {
         this.state = ENTITY_STATE_ENUM.ATTACK
-        return true
+        return enemiyId
       }else  if (
         type === CONTROLLER_ENUM.RIGHT && 
         this.direction === DIRECTION_ENUM.RIGHT && 
@@ -202,11 +204,11 @@ export class PlayerManager extends EntityManager {
         enemyY === this.targetY
       ) {
         this.state = ENTITY_STATE_ENUM.ATTACK
-        return true
+        return enemiyId
       }
 
     }
-    return false
+    return ''
   }
 
 
