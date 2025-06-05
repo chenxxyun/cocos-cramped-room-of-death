@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-05 15:48:55
+ * @LastEditTime: 2025-06-05 18:42:28
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -15,6 +15,7 @@ import {
   DIRECTION_ENUM,
   ENTITY_STATE_ENUM,
   EVENT_ENUM,
+  SHAKE_TYPE_ENUM,
 } from '../../Enums';
 import { IEntity } from '../../Levels';
 import DataManager from '../../Runtime/DataManager';
@@ -104,8 +105,35 @@ export class PlayerManager extends EntityManager {
     }
 
     if (this.willBlock(InputDeviceInfo)) {
-      console.log('block');
-
+      if (InputDeviceInfo === CONTROLLER_ENUM.TOP) {
+        EventManager.Instance.emit(EVENT_ENUM.SCREEN_SHAKE,SHAKE_TYPE_ENUM.TOP)
+      }else if (InputDeviceInfo === CONTROLLER_ENUM.BOTTOM) {
+        EventManager.Instance.emit(EVENT_ENUM.SCREEN_SHAKE,SHAKE_TYPE_ENUM.BOTTOM)
+      }else if (InputDeviceInfo === CONTROLLER_ENUM.LEFT) {
+        EventManager.Instance.emit(EVENT_ENUM.SCREEN_SHAKE,SHAKE_TYPE_ENUM.LEFT)
+      }else if (InputDeviceInfo === CONTROLLER_ENUM.RIGHT) {
+        EventManager.Instance.emit(EVENT_ENUM.SCREEN_SHAKE,SHAKE_TYPE_ENUM.RIGHT)
+      }else if(InputDeviceInfo === CONTROLLER_ENUM.TURNLEFT ){
+          if (this.direction ===DIRECTION_ENUM.TOP) {
+            EventManager.Instance.emit(EVENT_ENUM.SCREEN_SHAKE,SHAKE_TYPE_ENUM.LEFT)
+          }else if (this.direction === DIRECTION_ENUM.BOTTOM) {
+            EventManager.Instance.emit(EVENT_ENUM.SCREEN_SHAKE,SHAKE_TYPE_ENUM.RIGHT)
+          }else if (this.direction === DIRECTION_ENUM.LEFT) {
+            EventManager.Instance.emit(EVENT_ENUM.SCREEN_SHAKE,SHAKE_TYPE_ENUM.BOTTOM)
+          }else if (this.direction === DIRECTION_ENUM.RIGHT) {
+            EventManager.Instance.emit(EVENT_ENUM.SCREEN_SHAKE,SHAKE_TYPE_ENUM.TOP)
+          }
+      }else if(InputDeviceInfo === CONTROLLER_ENUM.TURNRIGHT ){
+        if (this.direction ===DIRECTION_ENUM.TOP) {
+          EventManager.Instance.emit(EVENT_ENUM.SCREEN_SHAKE,SHAKE_TYPE_ENUM.RIGHT)
+        }else if (this.direction === DIRECTION_ENUM.BOTTOM) {
+          EventManager.Instance.emit(EVENT_ENUM.SCREEN_SHAKE,SHAKE_TYPE_ENUM.LEFT)
+        }else if (this.direction === DIRECTION_ENUM.LEFT) {
+          EventManager.Instance.emit(EVENT_ENUM.SCREEN_SHAKE,SHAKE_TYPE_ENUM.TOP)
+        }else if (this.direction === DIRECTION_ENUM.RIGHT) {
+          EventManager.Instance.emit(EVENT_ENUM.SCREEN_SHAKE,SHAKE_TYPE_ENUM.BOTTOM)
+        }
+    }
       return
     }
     this.move(InputDeviceInfo)

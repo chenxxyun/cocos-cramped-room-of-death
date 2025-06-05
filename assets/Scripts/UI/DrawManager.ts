@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 15:20:58
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-05 17:15:02
+ * @LastEditTime: 2025-06-05 18:29:21
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\UI\ControllerManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -28,7 +28,7 @@ enum FADE_STATE_ENUM{
     FADE_OUT = 'FADE_OUT',
 }
 
-export const FADE_DEFAULT_DURATION = 2000
+export const FADE_DEFAULT_DURATION = 200
 
 @ccclass('DrawManager')
 export class DrawManager extends Component {
@@ -62,7 +62,6 @@ export class DrawManager extends Component {
 
     update(dt: number): void {
         const percent = (game.totalTime - this.oldTime) / this.duration
-        console.log(percent);
         
         switch(this.state){
             case FADE_STATE_ENUM.IDLE:
