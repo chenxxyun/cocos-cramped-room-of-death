@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-05 16:34:06
+ * @LastEditTime: 2025-06-05 17:03:39
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -21,6 +21,7 @@ import {
 import Levels, { ILevel } from '../../Levels';
 import DataManager from '../../Runtime/DataManager';
 import EventManager from '../../Runtime/EventManager';
+import FadeManager from '../../Runtime/FadeManager';
 import { createUINode } from '../../Utils';
 import { BurstManager } from '../Burst/BurstManager';
 import { DoorManager } from '../Door/DoorManager';
@@ -59,23 +60,27 @@ export class BetaleManneger extends Component {
         
     }
 
-    initLevel(){
+    async initLevel(){
         this.clearlevel()
         const level = Levels[`level${DataManager.Instance.levelIndex}`];
         if (level) {
+            await FadeManager.Instance.fadeIn()
             this.level = level;
             DataManager.Instance.MapInfo = this.level.mapInfo;
             DataManager.Instance.mapRowCount = this.level.mapInfo.length || 0;
             DataManager.Instance.mapColumnCount = this.level.mapInfo[0].length || 0;
 
-            this.generateTileMap()
-            this.generateBurst()
-            this.generateSpikes()
-            this.generateSmokeLayer()
-            this.generateDoor()
-            this.generateEnemies()
-            this.generatePlayer()
+            await Promise.all([ 
+                this.generateTileMap(),
+                this.generateBurst(),
+                this.generateSpikes(),
+                this.generateSmokeLayer(),
+                this.generateDoor(),
+                this.generateEnemies(),
+                this.generatePlayer()
+            ]) 
 
+            await FadeManager.Instance.fadeOut()
         }
     }
 
@@ -101,7 +106,7 @@ export class BetaleManneger extends Component {
         this.adaptPos()
     }
     
-    generateSmokeLayer(){
+    async generateSmokeLayer(){
         this.smokeLayer = createUINode()
         this.smokeLayer.setParent(this.stage)
     }
