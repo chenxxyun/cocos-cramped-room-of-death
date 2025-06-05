@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-05 14:01:54
+ * @LastEditTime: 2025-06-05 14:19:06
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -15,11 +15,15 @@ import {
 
 import { StateMachine } from '../../Base/StateMachine';
 import {
+  ENTITY_STATE_ENUM,
   ENTITY_TYPE_ENUM,
+  EVENT_ENUM,
   PARAMS_NAME_ENUM,
   SPIKES_TYPE_MAP_TOTAL_COUNT_ENUM,
 } from '../../Enums';
 import { ISpike } from '../../Levels';
+import DataManager from '../../Runtime/DataManager';
+import EventManager from '../../Runtime/EventManager';
 import { randomByLen } from '../../Utils';
 import {
   TILE_HEIGHT,
@@ -80,6 +84,8 @@ const { ccclass, property } = _decorator;
 
           this.count = params.count
 
+          EventManager.Instance.on(EVENT_ENUM.PLAYER_MOVE_END,this.onLoop,this)
+
   
       }
   
@@ -89,9 +95,29 @@ const { ccclass, property } = _decorator;
       
       }
       onDestroy(){
-          
+        EventManager.Instance.off(EVENT_ENUM.PLAYER_MOVE_END,this.onLoop)
       }
-  
+      onLoop(){
+        if (this.count === this.totalCount) {
+          this.count = 1
+        }else{
+          this.count++
+        }
+        this.onAttack()
+      }
+      
+      backZero(){
+          this.count = 0
+      }
+      onAttack(){
+        if (!DataManager.Instance.player) {
+          return
+        }
+        const {x:playerX,y:playerY } = DataManager.Instance.player
+        if (this.x === playerX && this.y === playerY && this.count  === this.totalCount) {
+          EventManager.Instance.emit(EVENT_ENUM.ATTACK_PLAYER,ENTITY_STATE_ENUM.DEATH)
+        }
+      }
   
   }
     
