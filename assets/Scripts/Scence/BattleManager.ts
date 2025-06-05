@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-04 19:10:50
+ * @LastEditTime: 2025-06-05 11:12:07
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -12,12 +12,18 @@ import {
   Node,
 } from 'cc';
 
-import { EVENT_ENUM } from '../../Enums';
+import {
+  DIRECTION_ENUM,
+  ENTITY_STATE_ENUM,
+  ENTITY_TYPE_ENUM,
+  EVENT_ENUM,
+} from '../../Enums';
 import Levels, { ILevel } from '../../Levels';
 import DataManager from '../../Runtime/DataManager';
 import EventManager from '../../Runtime/EventManager';
 import { createUINode } from '../../Utils';
 import { DoorManager } from '../Door/DoorManager';
+import { IronSkeletonManager } from '../IronSkeleton/IronSkeletonManager';
 import { PlayerManager } from '../Player/PlayerManager';
 import {
   TILE_HEIGHT,
@@ -89,7 +95,13 @@ export class BetaleManneger extends Component {
         const player = createUINode()
         player.setParent(this.stage)
         const playerManager = player.addComponent(PlayerManager)
-        await playerManager.init()
+        await playerManager.init({
+            x: 2,
+            y: 8,
+            type: ENTITY_TYPE_ENUM.PLAYER,
+            direction: DIRECTION_ENUM.TOP,
+            state: ENTITY_STATE_ENUM.IDLE
+          })
         DataManager.Instance.player = playerManager
 
         EventManager.Instance.emit(EVENT_ENUM.PLAYER_BORN,true)
@@ -97,9 +109,27 @@ export class BetaleManneger extends Component {
     async generateEnemies(){
         const enemiy = createUINode()
         enemiy.setParent(this.stage)
-        const enemiyManager = enemiy.addComponent(WoodenSkeletonManager)
-        await enemiyManager.init()
-        DataManager.Instance.enemies.push(enemiyManager)
+        const woodenSkeletonManager = enemiy.addComponent(WoodenSkeletonManager)
+        await woodenSkeletonManager.init({
+            x:2,
+            y:2,
+            type:ENTITY_TYPE_ENUM.SKELETON_WOODEN,
+            direction:DIRECTION_ENUM.TOP,
+            state:ENTITY_STATE_ENUM.IDLE
+        })
+        DataManager.Instance.enemies.push(woodenSkeletonManager)
+
+        const enemiy2 = createUINode()
+        enemiy2.setParent(this.stage)
+        const woodenSkeletonManager2 = enemiy2.addComponent(IronSkeletonManager)
+        await woodenSkeletonManager2.init({
+            x:2,
+            y:5,
+            type:ENTITY_TYPE_ENUM.SKELETON_IRON,
+            direction:DIRECTION_ENUM.TOP,
+            state:ENTITY_STATE_ENUM.IDLE
+        })
+        DataManager.Instance.enemies.push(woodenSkeletonManager2)
     }
     async generateDoor(){
         const door = createUINode()

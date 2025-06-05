@@ -2,19 +2,18 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-04 19:04:02
+ * @LastEditTime: 2025-06-05 10:34:30
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import { _decorator } from 'cc';
 
-import { EntityManager } from '../../Base/EntityManager';
+import { EnemyManager } from '../../Base/EnemyManager';
 import {
-  DIRECTION_ENUM,
   ENTITY_STATE_ENUM,
-  ENTITY_TYPE_ENUM,
   EVENT_ENUM,
 } from '../../Enums';
+import { IEntity } from '../../Levels';
 import DataManager from '../../Runtime/DataManager';
 import EventManager from '../../Runtime/EventManager';
 import { WoodenSkeletonMachine } from './WoodenSkeletonStateMachine';
@@ -22,76 +21,36 @@ import { WoodenSkeletonMachine } from './WoodenSkeletonStateMachine';
 const { ccclass, property } = _decorator;
   
   @ccclass('WoodenSkeletonManager')
-  export class WoodenSkeletonManager extends EntityManager {
+  export class WoodenSkeletonManager extends EnemyManager {
   
   
     targetX:number = 0
     targetY:number = 0
 
-    async init(){
+    async init(params:IEntity){
 
         // 添加设置状态机
         this.fsm = this.addComponent(WoodenSkeletonMachine)
         await this.fsm.init()
-        // this.fsm.setParams(PARAMS_NAME_ENUM.IDLE, true)
 
-        super.init({
-            x:2,
-            y:4,
-            type:ENTITY_TYPE_ENUM.SKELETON_WOODEN,
-            direction:DIRECTION_ENUM.TOP,
-            state:ENTITY_STATE_ENUM.IDLE
-        })
+        super.init(params)
 
    
-        EventManager.Instance.on(EVENT_ENUM.PLAYER_BORN,this.onChangeDirection,this)
-        EventManager.Instance.on(EVENT_ENUM.PLAYER_MOVE_END,this.onChangeDirection,this)
+        
         EventManager.Instance.on(EVENT_ENUM.PLAYER_MOVE_END,this.onAttack,this)
-        EventManager.Instance.on(EVENT_ENUM.ATTACK_ENEMY,this.onDead,this)
+     
 
         
         this.onChangeDirection(true)
     }
     onDestroy() {
       super.onDestroy()
-      EventManager.Instance.off(EVENT_ENUM.PLAYER_BORN,this.onChangeDirection)
-      EventManager.Instance.off(EVENT_ENUM.PLAYER_MOVE_END,this.onChangeDirection)
-      EventManager.Instance.off(EVENT_ENUM.PLAYER_MOVE_END,this.onAttack)
-      EventManager.Instance.off(EVENT_ENUM.ATTACK_ENEMY,this.onDead)
-    }
-
-    onChangeDirection(isInit=false){
-      if (this.state === ENTITY_STATE_ENUM.DEATH || !DataManager.Instance.player){
-        return
-      } 
-
-      const {x:playerX,y:playerY} = DataManager.Instance.player
-
-      const disX = Math.abs(this.x - playerX)
-      const disY = Math.abs(this.y - playerY)
-
-      if (disX === disY&&isInit) {
-        return
-      }
-
-     //第一象限
-      if (playerX >= this.x && playerY <= this.y) {
-        this.direction = disX >= disY ? DIRECTION_ENUM.RIGHT : DIRECTION_ENUM.TOP
-
-        //第二象限
-      } else if (playerX <= this.x && playerY <= this.y) {
-        this.direction = disX >= disY ? DIRECTION_ENUM.LEFT : DIRECTION_ENUM.TOP
-
-        //第三象限
-      } else if (playerX <= this.x && playerY >= this.y) {
-        this.direction = disX >= disY ? DIRECTION_ENUM.LEFT : DIRECTION_ENUM.BOTTOM
-
-        //第四象限
-      } else if (playerX >= this.x && playerY >= this.y) {
-        this.direction = disX >= disY ? DIRECTION_ENUM.RIGHT : DIRECTION_ENUM.BOTTOM
-      }
       
+      EventManager.Instance.off(EVENT_ENUM.PLAYER_MOVE_END,this.onAttack)
+
     }
+
+   
     onAttack(){
       if (this.state === ENTITY_STATE_ENUM.DEATH || !DataManager.Instance.player){
         return
@@ -114,17 +73,7 @@ const { ccclass, property } = _decorator;
       
     }
 
-    onDead(id:string){
-      console.log(id,this.id);
-      
-      if (this.state === ENTITY_STATE_ENUM.DEATH) {
-        return
-      }
-      if (this.id === id) {
-        this.state = ENTITY_STATE_ENUM.DEATH
-      }
 
-    }
   }
   
   

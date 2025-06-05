@@ -2,19 +2,17 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 14:18:43
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-04 19:10:13
+ * @LastEditTime: 2025-06-05 10:44:12
  * @FilePath: \cocos-cramped-room-of-death\assets\Runtime\DataManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 
+import { EnemyManager } from '../Base/EnemyManager';
 import Singleton from '../Base/Singleton';
 import { ITile } from '../Levels';
 import { DoorManager } from '../Scripts/Door/DoorManager';
 import { PlayerManager } from '../Scripts/Player/PlayerManager';
 import { TileManneger } from '../Scripts/Tile/TileManager';
-import {
-  WoodenSkeletonManager,
-} from '../Scripts/WoodenSkeleton/WoodenSkeletonManager';
 
 export default class DataManager extends Singleton{
 
@@ -28,7 +26,7 @@ export default class DataManager extends Singleton{
     levelIndex:number = 1
     player:PlayerManager
     door:DoorManager
-    enemies:WoodenSkeletonManager[]
+    enemies:EnemyManager[]
 
     reset(){
         this.MapInfo = []
