@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-05 11:55:36
+ * @LastEditTime: 2025-06-05 12:31:46
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -26,6 +26,7 @@ import { BurstManager } from '../Burst/BurstManager';
 import { DoorManager } from '../Door/DoorManager';
 import { IronSkeletonManager } from '../IronSkeleton/IronSkeletonManager';
 import { PlayerManager } from '../Player/PlayerManager';
+import { SpikesManager } from '../Spikes/SpikesManager';
 import {
   TILE_HEIGHT,
   TILE_WIDTH,
@@ -65,6 +66,7 @@ export class BetaleManneger extends Component {
             this.generateTileMap()
             this.generatePlayer()
             this.generateBurst()
+            this.generateSpikes()
             this.generateDoor()
             this.generateEnemies()
         }
@@ -158,6 +160,19 @@ export class BetaleManneger extends Component {
             state:ENTITY_STATE_ENUM.IDLE
         })
         DataManager.Instance.door = doorManager
+    }
+
+    async generateSpikes(){
+        const door = createUINode()
+        door.setParent(this.stage)
+        const spikesManager = door.addComponent(SpikesManager)
+        await spikesManager.init({
+            x:7,
+            y:5,
+            type:ENTITY_TYPE_ENUM.SPIKES_ONE,
+            count:0,
+        })
+        DataManager.Instance.spikes.push(spikesManager)
     }
 
     adaptPos(){
