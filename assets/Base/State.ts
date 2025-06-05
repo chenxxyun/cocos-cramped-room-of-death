@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-03 10:28:48
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-05 16:21:26
+ * @LastEditTime: 2025-06-05 19:14:54
  * @FilePath: \cocos-cramped-room-of-death\assets\Base\State.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -33,7 +33,8 @@ export default class State {
         private fsm: StateMachine,
         private path: string,
         private wrapMode: AnimationClip.WrapMode = AnimationClip.WrapMode.Normal,
-        private speed: number = ANIMATION_SPEED
+        private speed: number = ANIMATION_SPEED,
+        private events:any[] = []
 
     ) {
         this.init()
@@ -64,6 +65,13 @@ export default class State {
         this.animationClip.duration = frames.length * this.speed
         this.animationClip.wrapMode = this.wrapMode
 
+        for (const event of this.events) {
+            // this.animationClip.events.push(event)
+            this.animationClip.events = [
+                ...this.animationClip.events,
+                event
+              ];
+        }
 
     }
 

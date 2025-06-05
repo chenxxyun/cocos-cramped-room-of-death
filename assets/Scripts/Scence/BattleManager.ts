@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-05 18:22:24
+ * @LastEditTime: 2025-06-05 21:06:55
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -19,7 +19,7 @@ import {
   EVENT_ENUM,
 } from '../../Enums';
 import Levels, { ILevel } from '../../Levels';
-import DataManager from '../../Runtime/DataManager';
+import DataManager, { IRecord } from '../../Runtime/DataManager';
 import EventManager from '../../Runtime/EventManager';
 import FadeManager from '../../Runtime/FadeManager';
 import { createUINode } from '../../Utils';
@@ -224,6 +224,94 @@ export class BetaleManneger extends Component {
         this.stage.getComponent(ShakeManager).stop()
 
         this.stage.setPosition(-disX,disY)
+    }
+
+    record(){
+        const item:IRecord = { 
+            player:{
+                x:DataManager.Instance.player.x,
+                y:DataManager.Instance.player.y,
+                direction:DataManager.Instance.player.direction,
+                state:DataManager.Instance.player.state,
+                type:DataManager.Instance.player.type
+            },
+            door:{
+                x:DataManager.Instance.door.x,
+                y:DataManager.Instance.door.y,
+                direction:DataManager.Instance.door.direction,
+                state:DataManager.Instance.door.state,
+                type:DataManager.Instance.door.type
+            },
+            enemies:DataManager.Instance.enemies.map(enemy=>{
+                return {
+                    x:enemy.x,
+                    y:enemy.y,
+                    direction:enemy.direction,
+                    state:enemy.state,
+                    type:enemy.type
+                }
+            }),
+            bursts:DataManager.Instance.bursts.map(burst=>{
+                return {
+                    x:burst.x,
+                    y:burst.y,
+                    direction:burst.direction,
+                    state:burst.state,
+                    type:burst.type
+                }
+            }),
+            spikes:DataManager.Instance.spikes.map(spikes=>{
+                return {
+                    x:spikes.x,
+                    y:spikes.y,
+                    type:spikes.type,
+                    count:spikes.count
+                }
+            })
+           
+        }
+
+        DataManager.Instance.records.push(item)
+    }
+    revoke(){
+        const item = DataManager.Instance.records.pop()
+        if (item) {
+            DataManager.Instance.player.x = DataManager.Instance.player.targetX = item.player.x
+            DataManager.Instance.player.y = DataManager.Instance.player.targetY = item.player.y
+            DataManager.Instance.player.state = item.player.state
+            DataManager.Instance.player.direction = item.player.direction
+
+            DataManager.Instance.door.x = item.door.x
+            DataManager.Instance.door.y = item.door.y
+            DataManager.Instance.door.state = item.door.state
+            DataManager.Instance.door.direction = item.door.direction
+
+
+            for (let i = 0; i < DataManager.Instance.enemies.length; i++) {
+                const enemy = DataManager.Instance.enemies[i];
+                DataManager.Instance.enemies[i].state = enemy.state
+                DataManager.Instance.enemies[i].direction = enemy.direction
+                DataManager.Instance.enemies[i].x = enemy.x
+                DataManager.Instance.enemies[i].y = enemy.y
+                
+            }
+            for (let i = 0; i < DataManager.Instance.bursts.length; i++) {
+                const burst = DataManager.Instance.bursts[i];
+                DataManager.Instance.bursts[i].state = burst.state
+                DataManager.Instance.bursts[i].x = burst.x
+                DataManager.Instance.bursts[i].y = burst.y
+                
+            }
+            for (let i = 0; i < DataManager.Instance.spikes.length; i++) {
+                const spike = DataManager.Instance.spikes[i];
+                DataManager.Instance.spikes[i].type = spike.type
+                DataManager.Instance.spikes[i].count = spike.count
+                DataManager.Instance.spikes[i].x = spike.x
+                DataManager.Instance.spikes[i].y = spike.y
+                
+            }
+        }
+    
     }
  
 }

@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-05 11:54:19
+ * @LastEditTime: 2025-06-05 19:17:02
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -15,6 +15,7 @@ import { EnemyManager } from '../../Base/EnemyManager';
 import {
   ENTITY_STATE_ENUM,
   EVENT_ENUM,
+  SHAKE_TYPE_ENUM,
 } from '../../Enums';
 import { IEntity } from '../../Levels';
 import DataManager from '../../Runtime/DataManager';
@@ -71,9 +72,8 @@ const { ccclass, property } = _decorator;
       if (this.x === playerX && this.y === playerY&&this.state === ENTITY_STATE_ENUM.IDLE) {
         this.state = ENTITY_STATE_ENUM.ATTACK
       }else if (this.state === ENTITY_STATE_ENUM.ATTACK) {
-        console.log('onBurst');
-        
         this.state = ENTITY_STATE_ENUM.DEATH
+        EventManager.Instance.emit(EVENT_ENUM.SCREEN_SHAKE,SHAKE_TYPE_ENUM.BOTTOM)
         if (this.x===playerX && this.y===playerY) {
             EventManager.Instance.emit(EVENT_ENUM.ATTACK_PLAYER,ENTITY_STATE_ENUM.AIRDEATH,this)
         }

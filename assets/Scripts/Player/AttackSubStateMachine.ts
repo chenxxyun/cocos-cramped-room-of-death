@@ -1,13 +1,18 @@
+import { AnimationClip } from 'cc';
+
 import DirectionSubStateMachine from '../../Base/DirectionSubStateMachine';
-import State from '../../Base/State';
+import State, { ANIMATION_SPEED } from '../../Base/State';
 import { StateMachine } from '../../Base/StateMachine';
-import { DIRECTION_ENUM } from '../../Enums';
+import {
+  DIRECTION_ENUM,
+  SHAKE_TYPE_ENUM,
+} from '../../Enums';
 
 /*
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-03 13:45:20
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-04 18:21:16
+ * @LastEditTime: 2025-06-05 19:06:34
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Player\TurnLeftSubStateMachine.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * 
@@ -15,23 +20,55 @@ import { DIRECTION_ENUM } from '../../Enums';
 
 const BASE_URL = 'texture/player/attack'
 export default class AttackSubStateMachine extends DirectionSubStateMachine {
-    constructor(fsm:StateMachine) {
+    constructor(fsm: StateMachine) {
         super(fsm)
         this.stateMachine.set(
-            DIRECTION_ENUM.TOP, 
-            new State(fsm,`${BASE_URL}/top`)
+            DIRECTION_ENUM.TOP,
+            new State(fsm, `${BASE_URL}/top`,
+                AnimationClip.WrapMode.Normal,
+                ANIMATION_SPEED,
+                [{
+                    frame: ANIMATION_SPEED * 4, // 第 四帧时触发事件
+                    func: 'onAttackShake', // 事件触发时调用的函数名称
+                    params: [SHAKE_TYPE_ENUM.TOP],
+                }]
+            )
         )
         this.stateMachine.set(
-            DIRECTION_ENUM.BOTTOM, 
-            new State(fsm,`${BASE_URL}/bottom`)
+            DIRECTION_ENUM.BOTTOM,
+            new State(fsm, `${BASE_URL}/bottom`,
+                AnimationClip.WrapMode.Normal,
+                ANIMATION_SPEED,
+                [{
+                    frame: ANIMATION_SPEED * 4, // 第 四帧时触发事件
+                    func: 'onAttackShake', // 事件触发时调用的函数名称
+                    params: [SHAKE_TYPE_ENUM.BOTTOM],
+                }]
+            )
         )
         this.stateMachine.set(
-            DIRECTION_ENUM.LEFT, 
-            new State(fsm,`${BASE_URL}/left`)
+            DIRECTION_ENUM.LEFT,
+            new State(fsm, `${BASE_URL}/left`,
+                AnimationClip.WrapMode.Normal,
+                ANIMATION_SPEED,
+                [{
+                    frame: ANIMATION_SPEED * 4, // 第 四帧时触发事件
+                    func: 'onAttackShake', // 事件触发时调用的函数名称
+                    params: [SHAKE_TYPE_ENUM.LEFT],
+                }]
+            )
         )
         this.stateMachine.set(
-            DIRECTION_ENUM.RIGHT, 
-            new State(fsm,`${BASE_URL}/right`)
+            DIRECTION_ENUM.RIGHT,
+            new State(fsm, `${BASE_URL}/right`,
+                AnimationClip.WrapMode.Normal,
+                ANIMATION_SPEED,
+                [{
+                    frame: ANIMATION_SPEED * 4, // 第 四帧时触发事件
+                    func: 'onAttackShake', // 事件触发时调用的函数名称
+                    params: [SHAKE_TYPE_ENUM.RIGHT],
+                }]
+            )
         )
     }
 
