@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-05 12:14:16
+ * @LastEditTime: 2025-06-05 14:01:54
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -37,9 +37,9 @@ const { ccclass, property } = _decorator;
       y:number = 0
   
       fsm:StateMachine
-      private _count:number
-      private _totalCount:number
-      private type:ENTITY_TYPE_ENUM
+      _count:number
+      _totalCount:number
+      type:ENTITY_TYPE_ENUM
   
       get count(){
           return this._count
@@ -72,7 +72,11 @@ const { ccclass, property } = _decorator;
           this.y = params.y
           this.type = params.type
 
+          console.log(this.type);
+          
+
           this.totalCount = SPIKES_TYPE_MAP_TOTAL_COUNT_ENUM[this.type]
+          
 
           this.count = params.count
 

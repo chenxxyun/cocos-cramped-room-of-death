@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-05 12:31:46
+ * @LastEditTime: 2025-06-05 14:04:53
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -62,13 +62,13 @@ export class BetaleManneger extends Component {
             DataManager.Instance.MapInfo = this.level.mapInfo;
             DataManager.Instance.mapRowCount = this.level.mapInfo.length || 0;
             DataManager.Instance.mapColumnCount = this.level.mapInfo[0].length || 0;
-        
-            this.generateTileMap()
+            
             this.generatePlayer()
+            this.generateEnemies()
+            this.generateTileMap()
             this.generateBurst()
             this.generateSpikes()
             this.generateDoor()
-            this.generateEnemies()
         }
     }
 
@@ -86,8 +86,6 @@ export class BetaleManneger extends Component {
         this.stage.setParent(this.node)
     }
     async generateTileMap() {
-        // const stage = new Node()
-        // stage.setParent(this.node)
         const TileMap = new Node()
         TileMap.setParent(this.stage)
         const tileMapManager = TileMap.addComponent(TileMapManneger)
@@ -163,13 +161,13 @@ export class BetaleManneger extends Component {
     }
 
     async generateSpikes(){
-        const door = createUINode()
-        door.setParent(this.stage)
-        const spikesManager = door.addComponent(SpikesManager)
+        const spikes = createUINode()
+        spikes.setParent(this.stage)
+        const spikesManager = spikes.addComponent(SpikesManager)
         await spikesManager.init({
             x:7,
             y:5,
-            type:ENTITY_TYPE_ENUM.SPIKES_ONE,
+            type:ENTITY_TYPE_ENUM.SPIKES_FOUR,
             count:0,
         })
         DataManager.Instance.spikes.push(spikesManager)
