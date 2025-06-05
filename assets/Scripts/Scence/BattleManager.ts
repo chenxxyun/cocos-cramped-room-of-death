@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-05 14:38:04
+ * @LastEditTime: 2025-06-05 16:34:06
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -13,6 +13,7 @@ import {
 } from 'cc';
 
 import {
+  DIRECTION_ENUM,
   ENTITY_STATE_ENUM,
   ENTITY_TYPE_ENUM,
   EVENT_ENUM,
@@ -25,6 +26,7 @@ import { BurstManager } from '../Burst/BurstManager';
 import { DoorManager } from '../Door/DoorManager';
 import { IronSkeletonManager } from '../IronSkeleton/IronSkeletonManager';
 import { PlayerManager } from '../Player/PlayerManager';
+import { SmokeManager } from '../Smoke/SmokeManager';
 import { SpikesManager } from '../Spikes/SpikesManager';
 import {
   TILE_HEIGHT,
@@ -40,11 +42,13 @@ export class BetaleManneger extends Component {
 
     level:ILevel;
     stage:Node;
+    private smokeLayer:Node
 
     onLoad() {
         DataManager.Instance.levelIndex = 1
         EventManager.Instance.on(EVENT_ENUM.NEXT_LEVEL,this.nextLevel,this);
         EventManager.Instance.on(EVENT_ENUM.PLAYER_MOVE_END,this.checkArrived,this);
+        EventManager.Instance.on(EVENT_ENUM.SHOW_SMOKE, this.generateSmoke,this);
     }
     onDestroy() {
          EventManager.Instance.off(EVENT_ENUM.NEXT_LEVEL,this.nextLevel);
@@ -65,10 +69,11 @@ export class BetaleManneger extends Component {
             DataManager.Instance.mapColumnCount = this.level.mapInfo[0].length || 0;
 
             this.generateTileMap()
-            this.generateEnemies()
             this.generateBurst()
             this.generateSpikes()
+            this.generateSmokeLayer()
             this.generateDoor()
+            this.generateEnemies()
             this.generatePlayer()
 
         }
@@ -94,6 +99,39 @@ export class BetaleManneger extends Component {
         await tileMapManager.init()
      
         this.adaptPos()
+    }
+    
+    generateSmokeLayer(){
+        this.smokeLayer = createUINode()
+        this.smokeLayer.setParent(this.stage)
+    }
+    async generateSmoke(x:number,y:number,direction:DIRECTION_ENUM){
+        const item = DataManager.Instance.smokes.find(smoke => smoke.state === ENTITY_STATE_ENUM.DEATH)
+        if (item) {
+            console.log('smoke');
+            
+            item.x = x
+            item.y = y
+            item.direction = direction
+            item.state = ENTITY_STATE_ENUM.IDLE
+            item.node.setPosition(x*TILE_WIDTH - 1.5*TILE_WIDTH,-y*TILE_HEIGHT + 1.5*TILE_HEIGHT)
+        }else{
+            const smoke = createUINode()
+            smoke.setParent(this.smokeLayer)
+            const smokeManager = smoke.addComponent(SmokeManager)
+            await smokeManager.init({
+                x,
+                y,
+                direction,
+                state: ENTITY_STATE_ENUM.IDLE,
+                type: ENTITY_TYPE_ENUM.SMOKE
+            })
+            DataManager.Instance.smokes.push(smokeManager)
+        }
+
+      
+
+
     }
     async generatePlayer(){
         const player = createUINode()
@@ -158,6 +196,9 @@ export class BetaleManneger extends Component {
     }
 
     checkArrived(){
+        if (!DataManager.Instance.player || !DataManager.Instance.door) {
+            return
+        }
         const {x:PlayerX,y:PlayerY} = DataManager.Instance.player
         const {x:DoorX,y:DoorY,state:doorState} = DataManager.Instance.door
 

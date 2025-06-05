@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-05 14:49:14
+ * @LastEditTime: 2025-06-05 15:48:55
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -39,24 +39,21 @@ export class PlayerManager extends EntityManager {
     // 添加设置状态机
     this.fsm = this.addComponent(PlayerStateMachine)
     await this.fsm.init()
-    // this.fsm.setParams(PARAMS_NAME_ENUM.IDLE, true)
 
     super.init(params)
 
     this.targetX = this.x
     this.targetY = this.y
-    // 设置初始方向
-    // this.direction = DIRECTION_ENUM.TOP
-    // 设置初始状态
-    // this.state = ENTITY_STATE_ENUM.IDLE
-
+    
     // 添加按钮控制事件
     EventManager.Instance.on(EVENT_ENUM.PLAYER_CTRL, this.inputHandle, this)
-
-    // EventManager.Instance.on(EVENT_ENUM.PLAYER_ON_KEYDOWN,this.inputHandle,this)
-
     EventManager.Instance.on(EVENT_ENUM.ATTACK_PLAYER, this.onDead, this)
 
+  }
+  onDestroy() {
+    super.onDestroy()
+    EventManager.Instance.off(EVENT_ENUM.PLAYER_CTRL, this.inputHandle)
+    EventManager.Instance.off(EVENT_ENUM.ATTACK_PLAYER, this.onDead)
   }
 
   update() {
@@ -87,8 +84,6 @@ export class PlayerManager extends EntityManager {
 
       EventManager.Instance.emit(EVENT_ENUM.PLAYER_MOVE_END)
     }
-
-
 
   }
 
@@ -122,16 +117,19 @@ export class PlayerManager extends EntityManager {
     if (InputDeviceInfo === CONTROLLER_ENUM.TOP) {
       this.targetY -= 1
       this.isMoving = true
-
+      this.showSmoke(DIRECTION_ENUM.TOP)
     } else if (InputDeviceInfo === CONTROLLER_ENUM.BOTTOM) {
       this.targetY += 1
       this.isMoving = true
+      this.showSmoke(DIRECTION_ENUM.BOTTOM)
     } else if (InputDeviceInfo === CONTROLLER_ENUM.LEFT) {
       this.targetX -= 1
       this.isMoving = true
+      this.showSmoke(DIRECTION_ENUM.LEFT)
     } else if (InputDeviceInfo === CONTROLLER_ENUM.RIGHT) {
       this.targetX += 1
       this.isMoving = true
+      this.showSmoke(DIRECTION_ENUM.RIGHT)
     } else if (InputDeviceInfo === CONTROLLER_ENUM.TURNLEFT) {
 
       if (this.direction === DIRECTION_ENUM.TOP) {
@@ -166,6 +164,9 @@ export class PlayerManager extends EntityManager {
 
     }
 
+  }
+  showSmoke(type: DIRECTION_ENUM) {
+    EventManager.Instance.emit(EVENT_ENUM.SHOW_SMOKE,this.x,this.y,type)
   }
 
   willAttack(type: CONTROLLER_ENUM) {
@@ -209,90 +210,6 @@ export class PlayerManager extends EntityManager {
     }
     return ''
   }
-
-
-  /*  willBlock(InputDeviceInfo:CONTROLLER_ENUM){
-       const {targetX:x,targetY:y,direction} = this
-       const {tileInfo} = DataManager.Instance
-
-       if (InputDeviceInfo === CONTROLLER_ENUM.TOP) {
-           if(direction === DIRECTION_ENUM.TOP){
-               const playerNextY = y - 1
-               const weaponNextY = y - 2
-               if(playerNextY < 0){
-                   this.state = ENTITY_STATE_ENUM.BLOCKFRONT
-                   return true
-               }
-
-               const playerTile = tileInfo[x][playerNextY]
-               const weaponTile = tileInfo[x][weaponNextY]
-               if (playerTile && playerTile.moveable && (!weaponTile || weaponTile.turnable)) {
-                   
-               }else{
-                   this.state = ENTITY_STATE_ENUM.BLOCKFRONT
-                   return true  
-               }
-           }
-       }else if (InputDeviceInfo === CONTROLLER_ENUM.BOTTOM) {
-           const playerNextY = y + 1
-           const weaponNextY = y + 2
-           const playerTile = tileInfo[x][playerNextY]
-           const weaponTile = tileInfo[x][weaponNextY]
-           if(direction === DIRECTION_ENUM.BOTTOM){
-               if(playerNextY < 0){
-                   return true
-               }
-               if (playerTile && playerTile.moveable && (!weaponTile || weaponTile.turnable)) {
-                   
-               }else{
-                   return true  
-               }
-           }else if(direction === DIRECTION_ENUM.TOP){
-               if (playerTile.moveable) {
-                   
-               }else{
-                   return true  
-               }
-           }
-       }else if(InputDeviceInfo === CONTROLLER_ENUM.TURNLEFT){
-           let nextX: number
-           let nextY: number
-
-           if (direction === DIRECTION_ENUM.TOP) {
-               nextX = x - 1
-               nextY = y - 1
-               
-           }else if (direction === DIRECTION_ENUM.BOTTOM) {
-               nextX = x + 1
-               nextY = y + 1
-               
-           }else if (direction === DIRECTION_ENUM.LEFT) {
-               nextX = x - 1
-               nextY = y + 1
-               
-           }else if (direction === DIRECTION_ENUM.RIGHT) {
-               nextX = x + 1
-               nextY = y - 1
-               
-           }
-
-           if(
-               (!tileInfo[x][nextY] || tileInfo[x][nextY].turnable) &&
-               (!tileInfo[nextX][y] || tileInfo[nextX][y].turnable) &&
-               (!tileInfo[nextX][nextY] || tileInfo[nextX][nextY].turnable) 
-           ){
-           
-           }else{
-               this.state = ENTITY_STATE_ENUM.BLOCKTURNLEFT
-               return true
-           }
-
-       }
-
-       return false
-
-   } */
-
 
   willBlock(type: CONTROLLER_ENUM) {
     const { targetX: x, targetY: y, direction } = this
