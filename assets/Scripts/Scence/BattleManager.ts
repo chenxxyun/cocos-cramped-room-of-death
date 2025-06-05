@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-05 11:12:07
+ * @LastEditTime: 2025-06-05 11:55:36
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -22,6 +22,7 @@ import Levels, { ILevel } from '../../Levels';
 import DataManager from '../../Runtime/DataManager';
 import EventManager from '../../Runtime/EventManager';
 import { createUINode } from '../../Utils';
+import { BurstManager } from '../Burst/BurstManager';
 import { DoorManager } from '../Door/DoorManager';
 import { IronSkeletonManager } from '../IronSkeleton/IronSkeletonManager';
 import { PlayerManager } from '../Player/PlayerManager';
@@ -63,6 +64,7 @@ export class BetaleManneger extends Component {
         
             this.generateTileMap()
             this.generatePlayer()
+            this.generateBurst()
             this.generateDoor()
             this.generateEnemies()
         }
@@ -106,6 +108,19 @@ export class BetaleManneger extends Component {
 
         EventManager.Instance.emit(EVENT_ENUM.PLAYER_BORN,true)
     }
+    async generateBurst(){
+        const burst = createUINode()
+        burst.setParent(this.stage)
+        const burstManager = burst.addComponent(BurstManager)
+        await burstManager.init({
+            x: 2,
+            y: 6,
+            type: ENTITY_TYPE_ENUM.BURST,
+            direction: DIRECTION_ENUM.TOP,
+            state: ENTITY_STATE_ENUM.IDLE
+          })
+        DataManager.Instance.bursts.push(burstManager)
+    }
     async generateEnemies(){
         const enemiy = createUINode()
         enemiy.setParent(this.stage)
@@ -135,7 +150,13 @@ export class BetaleManneger extends Component {
         const door = createUINode()
         door.setParent(this.stage)
         const doorManager = door.addComponent(DoorManager)
-        await doorManager.init()
+        await doorManager.init({
+            x:7,
+            y:8,
+            type:ENTITY_TYPE_ENUM.DOOR,
+            direction:DIRECTION_ENUM.TOP,
+            state:ENTITY_STATE_ENUM.IDLE
+        })
         DataManager.Instance.door = doorManager
     }
 

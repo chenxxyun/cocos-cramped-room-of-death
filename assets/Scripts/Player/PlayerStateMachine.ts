@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-04 18:21:57
+ * @LastEditTime: 2025-06-05 11:53:35
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -21,6 +21,7 @@ import {
   ENTITY_STATE_ENUM,
   PARAMS_NAME_ENUM,
 } from '../../Enums';
+import AirDeathSubStateMAchine from './AirDeathSubStateMAchine';
 import AttackSubStateMachine from './AttackSubStateMachine';
 import BlockBacktSubStateMachine from './BlockBacktSubStateMachine';
 import BlockFrontSubStateMachine from './BlockFrontSubStateMachine';
@@ -62,6 +63,7 @@ export class PlayerStateMachine extends StateMachine {
         this.params.set(PARAMS_NAME_ENUM.BLOCKTURNLEFT,getInitParamsTrigger())
         this.params.set(PARAMS_NAME_ENUM.BLOCKTURNRIGHT,getInitParamsTrigger())
         this.params.set(PARAMS_NAME_ENUM.DEATH,getInitParamsTrigger())
+        this.params.set(PARAMS_NAME_ENUM.AIRDEATH,getInitParamsTrigger())
         this.params.set(PARAMS_NAME_ENUM.ATTACK,getInitParamsTrigger())
         this.params.set(PARAMS_NAME_ENUM.DIRECTION,getInitParamsNumber())
     }
@@ -75,6 +77,7 @@ export class PlayerStateMachine extends StateMachine {
         this.stateMachine.set(PARAMS_NAME_ENUM.BLOCKRIGHT, new BlockRighttSubStateMachine(this))
         this.stateMachine.set(PARAMS_NAME_ENUM.BLOCKTURNLEFT, new BlockTurnLeftSubStateMachine(this))
         this.stateMachine.set(PARAMS_NAME_ENUM.BLOCKTURNRIGHT, new BlockTurnRightSubStateMachine(this))
+        this.stateMachine.set(PARAMS_NAME_ENUM.AIRDEATH, new AirDeathSubStateMAchine(this))
         this.stateMachine.set(PARAMS_NAME_ENUM.DEATH, new DeathSubStateMAchine(this))
         this.stateMachine.set(PARAMS_NAME_ENUM.ATTACK, new AttackSubStateMachine(this))
 
@@ -104,12 +107,15 @@ export class PlayerStateMachine extends StateMachine {
             case this.stateMachine.get(PARAMS_NAME_ENUM.BLOCKTURNLEFT):
             case this.stateMachine.get(PARAMS_NAME_ENUM.BLOCKTURNRIGHT):
             case this.stateMachine.get(PARAMS_NAME_ENUM.IDLE):
+            case this.stateMachine.get(PARAMS_NAME_ENUM.AIRDEATH):
             case this.stateMachine.get(PARAMS_NAME_ENUM.DEATH):
             case this.stateMachine.get(PARAMS_NAME_ENUM.ATTACK):
                 if(this.params.get(PARAMS_NAME_ENUM.ATTACK).value){
                     this.currentState  = this.stateMachine.get(PARAMS_NAME_ENUM.ATTACK)
                 }else if(this.params.get(PARAMS_NAME_ENUM.DEATH).value){
                     this.currentState  = this.stateMachine.get(PARAMS_NAME_ENUM.DEATH)
+                }else if(this.params.get(PARAMS_NAME_ENUM.AIRDEATH).value){
+                    this.currentState  = this.stateMachine.get(PARAMS_NAME_ENUM.AIRDEATH)
                 }else if(this.params.get(PARAMS_NAME_ENUM.BLOCKFRONT).value){
                     this.currentState  = this.stateMachine.get(PARAMS_NAME_ENUM.BLOCKFRONT)
                 }else if(this.params.get(PARAMS_NAME_ENUM.BLOCKBACK).value){

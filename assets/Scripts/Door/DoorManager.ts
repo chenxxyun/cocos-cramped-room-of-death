@@ -10,11 +10,10 @@ import { _decorator } from 'cc';
 
 import { EntityManager } from '../../Base/EntityManager';
 import {
-  DIRECTION_ENUM,
   ENTITY_STATE_ENUM,
-  ENTITY_TYPE_ENUM,
   EVENT_ENUM,
 } from '../../Enums';
+import { IEntity } from '../../Levels';
 import DataManager from '../../Runtime/DataManager';
 import EventManager from '../../Runtime/EventManager';
 import { DoorStateMachine } from './DoorStateMachine';
@@ -28,19 +27,13 @@ const { ccclass, property } = _decorator;
     targetX:number = 0
     targetY:number = 0
 
-    async init(){
+    async init(params:IEntity){
 
         // 添加设置状态机
         this.fsm = this.addComponent(DoorStateMachine)
         await this.fsm.init()
 
-        super.init({
-            x:7,
-            y:8,
-            type:ENTITY_TYPE_ENUM.DOOR,
-            direction:DIRECTION_ENUM.TOP,
-            state:ENTITY_STATE_ENUM.IDLE
-        })
+        super.init(params)
 
    
         EventManager.Instance.on(EVENT_ENUM.DOOR_OPEN,this.onOpen,this)
