@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-05 14:16:09
+ * @LastEditTime: 2025-06-05 14:38:04
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -13,7 +13,6 @@ import {
 } from 'cc';
 
 import {
-  DIRECTION_ENUM,
   ENTITY_STATE_ENUM,
   ENTITY_TYPE_ENUM,
   EVENT_ENUM,
@@ -43,7 +42,9 @@ export class BetaleManneger extends Component {
     stage:Node;
 
     onLoad() {
+        DataManager.Instance.levelIndex = 1
         EventManager.Instance.on(EVENT_ENUM.NEXT_LEVEL,this.nextLevel,this);
+        EventManager.Instance.on(EVENT_ENUM.PLAYER_MOVE_END,this.checkArrived,this);
     }
     onDestroy() {
          EventManager.Instance.off(EVENT_ENUM.NEXT_LEVEL,this.nextLevel);
@@ -62,7 +63,7 @@ export class BetaleManneger extends Component {
             DataManager.Instance.MapInfo = this.level.mapInfo;
             DataManager.Instance.mapRowCount = this.level.mapInfo.length || 0;
             DataManager.Instance.mapColumnCount = this.level.mapInfo[0].length || 0;
-            
+
             this.generateTileMap()
             this.generateEnemies()
             this.generateBurst()
@@ -98,82 +99,72 @@ export class BetaleManneger extends Component {
         const player = createUINode()
         player.setParent(this.stage)
         const playerManager = player.addComponent(PlayerManager)
-        await playerManager.init({
-            x: 2,
-            y: 8,
-            type: ENTITY_TYPE_ENUM.PLAYER,
-            direction: DIRECTION_ENUM.TOP,
-            state: ENTITY_STATE_ENUM.IDLE
-          })
+        await playerManager.init(this.level.player)
         DataManager.Instance.player = playerManager
 
         EventManager.Instance.emit(EVENT_ENUM.PLAYER_BORN,true)
     }
     async generateBurst(){
-        const burst = createUINode()
-        burst.setParent(this.stage)
-        const burstManager = burst.addComponent(BurstManager)
-        await burstManager.init({
-            x: 2,
-            y: 6,
-            type: ENTITY_TYPE_ENUM.BURST,
-            direction: DIRECTION_ENUM.TOP,
-            state: ENTITY_STATE_ENUM.IDLE
-          })
-        DataManager.Instance.bursts.push(burstManager)
+      
+        const promise = []
+        for (let i = 0; i < this.level.bursts.length; i++) {
+            const burst = this.level.bursts[i];
+            // const Manager = burst.type === ENTITY_TYPE_ENUM.SKELETON_WOODEN  ? WoodenSkeletonManager : IronSkeletonManager
+            const node = createUINode()
+            node.setParent(this.stage)
+            const burstManager = node.addComponent(BurstManager)
+            promise.push(burstManager.init(burst))
+            DataManager.Instance.bursts.push(burstManager)
+    
+        }
+        await Promise.all(promise)
     }
     async generateEnemies(){
-        const enemiy = createUINode()
-        enemiy.setParent(this.stage)
-        const woodenSkeletonManager = enemiy.addComponent(WoodenSkeletonManager)
-        await woodenSkeletonManager.init({
-            x:2,
-            y:2,
-            type:ENTITY_TYPE_ENUM.SKELETON_WOODEN,
-            direction:DIRECTION_ENUM.TOP,
-            state:ENTITY_STATE_ENUM.IDLE
-        })
-        DataManager.Instance.enemies.push(woodenSkeletonManager)
-
-        const enemiy2 = createUINode()
-        enemiy2.setParent(this.stage)
-        const woodenSkeletonManager2 = enemiy2.addComponent(IronSkeletonManager)
-        await woodenSkeletonManager2.init({
-            x:2,
-            y:5,
-            type:ENTITY_TYPE_ENUM.SKELETON_IRON,
-            direction:DIRECTION_ENUM.TOP,
-            state:ENTITY_STATE_ENUM.IDLE
-        })
-        DataManager.Instance.enemies.push(woodenSkeletonManager2)
+        const promise = []
+        for (let i = 0; i < this.level.enemies.length; i++) {
+            const enemy = this.level.enemies[i];
+            const Manager = enemy.type === ENTITY_TYPE_ENUM.SKELETON_WOODEN  ? WoodenSkeletonManager : IronSkeletonManager
+            const node = createUINode()
+            node.setParent(this.stage)
+            const woodenSkeletonManager = node.addComponent(Manager)
+            promise.push(woodenSkeletonManager.init(enemy))
+            DataManager.Instance.enemies.push(woodenSkeletonManager)
+    
+        }
+        await Promise.all(promise)
+      
     }
     async generateDoor(){
         const door = createUINode()
         door.setParent(this.stage)
         const doorManager = door.addComponent(DoorManager)
-        await doorManager.init({
-            x:7,
-            y:8,
-            type:ENTITY_TYPE_ENUM.DOOR,
-            direction:DIRECTION_ENUM.TOP,
-            state:ENTITY_STATE_ENUM.IDLE
-        })
+        await doorManager.init(this.level.door)
         DataManager.Instance.door = doorManager
     }
 
     async generateSpikes(){
-        const spikes = createUINode()
-        spikes.setParent(this.stage)
-        const spikesManager = spikes.addComponent(SpikesManager)
-        await spikesManager.init({
-            x:7,
-            y:5,
-            type:ENTITY_TYPE_ENUM.SPIKES_FOUR,
-            count:0,
-        })
-        DataManager.Instance.spikes.push(spikesManager)
+        
+        const promise = []
+        for (let i = 0; i < this.level.spikes.length; i++) {
+            const spikes = this.level.spikes[i];
+            const node = createUINode()
+            node.setParent(this.stage)
+            const spikesManager = node.addComponent(SpikesManager)
+            promise.push(spikesManager.init(spikes))
+            DataManager.Instance.spikes.push(spikesManager)
+    
+        }
+        await Promise.all(promise)
     }
 
+    checkArrived(){
+        const {x:PlayerX,y:PlayerY} = DataManager.Instance.player
+        const {x:DoorX,y:DoorY,state:doorState} = DataManager.Instance.door
+
+        if (PlayerX===DoorX && PlayerY===DoorY && doorState === ENTITY_STATE_ENUM.DEATH) {
+            EventManager.Instance.emit(EVENT_ENUM.NEXT_LEVEL)
+        }
+    }
     adaptPos(){
         const {mapColumnCount,mapRowCount} = DataManager.Instance
         const disX = (TILE_WIDTH * mapRowCount) / 2

@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-05 11:58:44
+ * @LastEditTime: 2025-06-05 14:49:14
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -94,8 +94,6 @@ export class PlayerManager extends EntityManager {
 
   onDead(type: ENTITY_STATE_ENUM) {
     this.state = type
-
-    console.log(type);
 
   }
 
@@ -303,7 +301,6 @@ export class PlayerManager extends EntityManager {
       (enemy: EnemyManager) => enemy.state !== ENTITY_STATE_ENUM.DEATH,
     )
     const { x: doorX, y: doorY, state: doorState } = DataManager.Instance.door || {}
-    
     const bursts: BurstManager[] = DataManager.Instance.bursts.filter(
       (burst: BurstManager) => burst.state !== ENTITY_STATE_ENUM.DEATH,
     )
@@ -347,14 +344,12 @@ export class PlayerManager extends EntityManager {
         }
 
         //判断地裂陷阱
-
-        for (let i = 0; i < bursts.length; i++) {
-         const {x:burstX,y:burstY} = bursts[i]
-          if ((x===burstX && playerNextY===burstY)&&(!nextWeaponTile || nextWeaponTile.turnable)) {
-            return false
-          }
+        if (
+          bursts.some(burst => burst.x === x && burst.y === playerNextY) &&
+          (!nextWeaponTile || nextWeaponTile.turnable)
+        ) {
+          return false
         }
-        
 
         //最后判断地图元素
         if (nextPlayerTile && nextPlayerTile.moveable && (!nextWeaponTile || nextWeaponTile.turnable)) {
@@ -397,7 +392,12 @@ export class PlayerManager extends EntityManager {
         }
 
         //判断地裂陷阱
-        
+        if (
+          bursts.some(burst => burst.x === x && burst.y === playerNextY) &&
+          (!nextWeaponTile || nextWeaponTile.turnable)
+        ) {
+          return false
+        }
 
         //最后判断地图元素
         if (nextPlayerTile && nextPlayerTile.moveable && (!nextWeaponTile || nextWeaponTile.turnable)) {
@@ -441,7 +441,12 @@ export class PlayerManager extends EntityManager {
         }
 
         //判断地裂陷阱
-        
+        if (
+          bursts.some(burst => burst.x === x && burst.y === playerNextY) &&
+          (!nextWeaponTile || nextWeaponTile.turnable)
+        ) {
+          return false
+        }
 
         //最后判断地图元素
         if (nextPlayerTile && nextPlayerTile.moveable && (!nextWeaponTile || nextWeaponTile.turnable)) {
@@ -485,7 +490,12 @@ export class PlayerManager extends EntityManager {
         }
 
         // 判断地裂陷阱
-        
+        if (
+          bursts.some(burst => burst.x === x && burst.y === playerNextY) &&
+          (!nextWeaponTile || nextWeaponTile.turnable)
+        ) {
+          return false
+        }
 
         //最后判断地图元素
         if (nextPlayerTile && nextPlayerTile.moveable && (!nextWeaponTile || nextWeaponTile.turnable)) {
@@ -533,7 +543,12 @@ export class PlayerManager extends EntityManager {
         }
 
         // 判断地裂陷阱
-        
+        if (
+          bursts.some(burst => burst.x === x && burst.y === playerNextY) &&
+          (!nextWeaponTile || nextWeaponTile.turnable)
+        ) {
+          return false
+        }
 
         //最后判断地图元素
         if (nextPlayerTile && nextPlayerTile.moveable && (!nextWeaponTile || nextWeaponTile.turnable)) {
@@ -576,7 +591,12 @@ export class PlayerManager extends EntityManager {
         }
 
         //判断地裂陷阱
-        
+        if (
+          bursts.some(burst => burst.x === x && burst.y === playerNextY) &&
+          (!nextWeaponTile || nextWeaponTile.turnable)
+        ) {
+          return false
+        }
 
         //最后判断地图元素
         if (nextPlayerTile && nextPlayerTile.moveable && (!nextWeaponTile || nextWeaponTile.turnable)) {
@@ -620,7 +640,12 @@ export class PlayerManager extends EntityManager {
         }
 
         //判断地裂陷阱
-        
+        if (
+          bursts.some(burst => burst.x === x && burst.y === playerNextY) &&
+          (!nextWeaponTile || nextWeaponTile.turnable)
+        ) {
+          return false
+        }
 
         //最后判断地图元素
         if (nextPlayerTile && nextPlayerTile.moveable && (!nextWeaponTile || nextWeaponTile.turnable)) {
@@ -664,7 +689,12 @@ export class PlayerManager extends EntityManager {
         }
 
         //判断地裂陷阱
-        
+        if (
+          bursts.some(burst => burst.x === x && burst.y === playerNextY) &&
+          (!nextWeaponTile || nextWeaponTile.turnable)
+        ) {
+          return false
+        }
 
         //最后判断地图元素
         if (nextPlayerTile && nextPlayerTile.moveable && (!nextWeaponTile || nextWeaponTile.turnable)) {
@@ -713,7 +743,13 @@ export class PlayerManager extends EntityManager {
           }
         }
 
-        
+        //判断地裂陷阱
+        if (
+          bursts.some(burst => burst.x === playerNextX && burst.y === y) &&
+          (!nextWeaponTile || nextWeaponTile.turnable)
+        ) {
+          return false
+        }
 
         //最后判断地图元素
         if (nextPlayerTile && nextPlayerTile.moveable && (!nextWeaponTile || nextWeaponTile.turnable)) {
@@ -757,7 +793,13 @@ export class PlayerManager extends EntityManager {
           }
         }
 
-        
+        //判断地裂陷阱
+        if (
+          bursts.some(burst => burst.x === playerNextX && burst.y === y) &&
+          (!nextWeaponTile || nextWeaponTile.turnable)
+        ) {
+          return false
+        }
 
         //最后判断地图元素
         if (nextPlayerTile && nextPlayerTile.moveable && (!nextWeaponTile || nextWeaponTile.turnable)) {
@@ -800,7 +842,13 @@ export class PlayerManager extends EntityManager {
           }
         }
 
-        
+        //判断地裂陷阱
+        if (
+          bursts.some(burst => burst.x === playerNextX && burst.y === y) &&
+          (!nextWeaponTile || nextWeaponTile.turnable)
+        ) {
+          return false
+        }
 
         //最后判断地图元素
         if (nextPlayerTile && nextPlayerTile.moveable && (!nextWeaponTile || nextWeaponTile.turnable)) {
@@ -843,7 +891,13 @@ export class PlayerManager extends EntityManager {
           }
         }
 
-        
+        //判断地裂陷阱
+        if (
+          bursts.some(burst => burst.x === playerNextX && burst.y === y) &&
+          (!nextWeaponTile || nextWeaponTile.turnable)
+        ) {
+          return false
+        }
 
         //最后判断地图元素
         if (nextPlayerTile && nextPlayerTile.moveable && (!nextWeaponTile || nextWeaponTile.turnable)) {
@@ -891,7 +945,13 @@ export class PlayerManager extends EntityManager {
           }
         }
 
-        
+        //判断地裂陷阱
+        if (
+          bursts.some(burst => burst.x === playerNextX && burst.y === y) &&
+          (!nextWeaponTile || nextWeaponTile.turnable)
+        ) {
+          return false
+        }
 
         //最后判断地图元素
         if (nextPlayerTile && nextPlayerTile.moveable && (!nextWeaponTile || nextWeaponTile.turnable)) {
@@ -934,7 +994,13 @@ export class PlayerManager extends EntityManager {
           }
         }
 
-        
+        //判断地裂陷阱
+        if (
+          bursts.some(burst => burst.x === playerNextX && burst.y === y) &&
+          (!nextWeaponTile || nextWeaponTile.turnable)
+        ) {
+          return false
+        }
 
         //最后判断地图元素
         if (nextPlayerTile && nextPlayerTile.moveable && (!nextWeaponTile || nextWeaponTile.turnable)) {
@@ -976,7 +1042,13 @@ export class PlayerManager extends EntityManager {
           }
         }
 
-        
+        //判断地裂陷阱
+        if (
+          bursts.some(burst => burst.x === playerNextX && burst.y === y) &&
+          (!nextWeaponTile || nextWeaponTile.turnable)
+        ) {
+          return false
+        }
 
         //最后判断地图元素
         if (nextPlayerTile && nextPlayerTile.moveable && (!nextWeaponTile || nextWeaponTile.turnable)) {
@@ -1018,7 +1090,13 @@ export class PlayerManager extends EntityManager {
           }
         }
 
-        
+        //判断地裂陷阱
+        if (
+          bursts.some(burst => burst.x === playerNextX && burst.y === y) &&
+          (!nextWeaponTile || nextWeaponTile.turnable)
+        ) {
+          return false
+        }
 
         //最后判断地图元素
         if (nextPlayerTile && nextPlayerTile.moveable && (!nextWeaponTile || nextWeaponTile.turnable)) {

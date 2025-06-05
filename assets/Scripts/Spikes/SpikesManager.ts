@@ -21,7 +21,7 @@ import {
   PARAMS_NAME_ENUM,
   SPIKES_TYPE_MAP_TOTAL_COUNT_ENUM,
 } from '../../Enums';
-import { ISpike } from '../../Levels';
+import { ISpikes } from '../../Levels';
 import DataManager from '../../Runtime/DataManager';
 import EventManager from '../../Runtime/EventManager';
 import { randomByLen } from '../../Utils';
@@ -62,7 +62,7 @@ const { ccclass, property } = _decorator;
           this.fsm.setParams(PARAMS_NAME_ENUM.SPIKES_TOTAL_COUNT,newtotalCount)
       }
   
-      async init(params:ISpike){
+      async init(params:ISpikes){
   
           const sprite = this.addComponent(Sprite)
           sprite.sizeMode = Sprite.SizeMode.CUSTOM
