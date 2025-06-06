@@ -2,7 +2,7 @@
  * @Author: 尘韵 2443492647@qq.com
  * @Date: 2025-06-02 12:39:40
  * @LastEditors: 尘韵 2443492647@qq.com
- * @LastEditTime: 2025-06-05 19:03:32
+ * @LastEditTime: 2025-06-06 11:57:29
  * @FilePath: \cocos-cramped-room-of-death\assets\Scripts\Scence\BattleManager.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -90,7 +90,11 @@ export class PlayerManager extends EntityManager {
 
   onDead(type: ENTITY_STATE_ENUM) {
     this.state = type
-
+    this.scheduleOnce(()=>{
+      if (this.state === ENTITY_STATE_ENUM.DEATH) {
+        EventManager.Instance.emit(EVENT_ENUM.RESTART_LEVEL)
+      }
+    },3)
   }
 
   inputHandle(InputDeviceInfo: CONTROLLER_ENUM) {
@@ -99,8 +103,13 @@ export class PlayerManager extends EntityManager {
 
     const id =this.willAttack(InputDeviceInfo)
     if (id)  {
+      EventManager.Instance.emit(EVENT_ENUM.RECORD_STEP)
+
+      this.state = ENTITY_STATE_ENUM.ATTACK
+
       EventManager.Instance.emit(EVENT_ENUM.ATTACK_ENEMY,id)
       EventManager.Instance.emit(EVENT_ENUM.DOOR_OPEN)
+      EventManager.Instance.emit(EVENT_ENUM.PLAYER_MOVE_END)
       return
     }
 
@@ -144,6 +153,7 @@ export class PlayerManager extends EntityManager {
 
   move(InputDeviceInfo: CONTROLLER_ENUM) {
     // console.log(DataManager.Instance.tileInfo);
+    EventManager.Instance.emit(EVENT_ENUM.RECORD_STEP)
 
     if (InputDeviceInfo === CONTROLLER_ENUM.TOP) {
       this.targetY -= 1
